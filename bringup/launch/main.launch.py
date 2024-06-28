@@ -12,15 +12,16 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 PathJoinSubstitution([
-                    FindPackageShare('bringup'),
+                    FindPackageShare('camera_images'),
                     'launch',
                     'camera.launch.py'
                 ])
             ]),
             launch_arguments={
                 # droidCam has max rate of 15 Hz    
-                'rate': '15',
+                # 'rate': '15',
                 'image_topic': '/camera_image',
+                # 'image_topic': '/image',
                 'camera_url': 'http://192.168.0.30:4747/video?320x240'
             }.items()
         )

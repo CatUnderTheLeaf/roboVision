@@ -1,8 +1,6 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String
-
 import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -16,11 +14,12 @@ class ImagePublisher(Node):
         camera_url = self.declare_parameter('camera_url', '0').value
 
         self.bridge = CvBridge()
-        self.cap = cv2.VideoCapture(camera_url)
+        self.cap = cv2.VideoCapture(camera_url, cv2.CAP_GSTREAMER)
+        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 2)
 
-        self.publisher_ = self.create_publisher(Image, "/image", 10)
+        self.publisher_ = self.create_publisher(Image, "/image", 1)
         
-        timer_period = 1 / rate
+        timer_period = 0.1 #1 / rate
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def timer_callback(self):
