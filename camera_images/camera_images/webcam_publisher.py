@@ -11,19 +11,19 @@ class ImagePublisher(Node):
 
     def __init__(self):
         super().__init__("image_publisher")
+
+        rate = self.declare_parameter('rate', 30).value # 30 Hz by default
+        camera_url = self.declare_parameter('camera_url', '0').value
+
         self.bridge = CvBridge()
-        self.cap = cv2.VideoCapture('http://192.168.0.30:4747/video?320x240')
+        self.cap = cv2.VideoCapture(camera_url)
+
         self.publisher_ = self.create_publisher(Image, "/image", 10)
-        timer_period = 0.5  # seconds
+        
+        timer_period = 1 / rate
         self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.i = 0
 
     def timer_callback(self):
-        # msg = String()
-        # msg.data = 'Hello World: %d' % self.i
-        # self.publisher_.publish(msg)
-        # self.get_logger().info('Publishing: "%s"' % msg.data)
-        # self.i += 1
         try:
             r, frame = self.cap.read()
             if not r:
