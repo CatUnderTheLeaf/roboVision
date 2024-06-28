@@ -13,7 +13,7 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='cat',
+    maintainer='Anastasiia',
     maintainer_email='catundertheleaf@gmail.com',
     description='everything to deal with camera images',
     license='Apache-2.0',

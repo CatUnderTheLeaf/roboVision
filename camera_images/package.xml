@@ -4,7 +4,7 @@
   <name>camera_images</name>
   <version>0.0.0</version>
   <description>everything to deal with camera images</description>
-  <maintainer email="catundertheleaf@gmail.com">cat</maintainer>
+  <maintainer email="catundertheleaf@gmail.com">Anastasiia</maintainer>
   <license>Apache-2.0</license>
 
   <test_depend>ament_copyright</test_depend>
