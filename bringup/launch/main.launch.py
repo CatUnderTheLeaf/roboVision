@@ -8,6 +8,12 @@ from launch.substitutions import PathJoinSubstitution
 
 def generate_launch_description():
     
+    config = PathJoinSubstitution([
+                    FindPackageShare('bringup'),
+                    'config',
+                    'camera_info.yaml'
+                ])
+
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
@@ -18,11 +24,10 @@ def generate_launch_description():
                 ])
             ]),
             launch_arguments={
-                # droidCam has max rate of 15 Hz    
-                # 'rate': '15',
-                'image_topic': '/camera_image',
-                # 'image_topic': '/image',
-                'camera_url': 'http://192.168.0.30:4747/video?320x240'
+                'image_topic': '/camera/image',
+                'camera_url': 'http://192.168.0.30:4747/video?320x240',
+                'camera_info_url': config,
+                'camera_info_topic': '/camera/camera_info'
             }.items()
         )
     ])

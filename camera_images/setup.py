@@ -25,7 +25,8 @@ setup(
     entry_points={
         'console_scripts': [
             'webcam_publisher = camera_images.webcam_publisher:main',
-            'cam_subscriber = camera_images.camera_subscriber:main'
+            'cam_subscriber = camera_images.camera_subscriber:main',
+            'camera_info_publisher = camera_images.camera_info_publisher:main'
         ],
     },
 )
