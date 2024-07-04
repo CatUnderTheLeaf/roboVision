@@ -17,7 +17,7 @@ class CameraInfoPublisher(Node):
             return
 
         # Publisher for the camera info
-        self.publisher_ = self.create_publisher(CameraInfo, '/camera_info', 10)
+        self.publisher_ = self.create_publisher(CameraInfo, 'camera_info', 10)
         
         # Timer to periodically publish camera info
         timer_period = 0.1  # seconds
