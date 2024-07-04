@@ -1,4 +1,26 @@
-# ros_gz_project_template
+# Plan for roboVision project
+
+ - [x] use a phone camera with an app which streams video over wifi
+ - [x] publish image from video stream as `sensor_msgs.Image`
+ - [x] calibrate camera with a checkboard
+ - [x] publish camera_info as `sensor_msgs.CameraInfo`
+ - [x] rectify image to remove distortions
+ - [x] view rectified image
+ - [ ] run YOLO in the inference mode
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
 A template project integrating ROS 2 and Gazebo simulator.
 
 ## Included packages
