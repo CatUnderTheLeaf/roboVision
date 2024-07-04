@@ -2,71 +2,78 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+
+from launch import LaunchDescription
 
 
 def generate_launch_description():
     
-    image_topic_launch_arg = DeclareLaunchArgument(
-        'image_topic',
-        default_value='/image'
+    arg_namespace = DeclareLaunchArgument(
+        name='camera_ns', default_value='my_camera',
+        description=('namespace for all components loaded')
     )
+
     camera_url_launch_arg = DeclareLaunchArgument(
         'camera_url',
         default_value='0'
     )
-    camera_info_launch_arg = DeclareLaunchArgument(
-        'camera_info_url',
-        default_value=''
-    )
-    camera_info_topic_launch_arg = DeclareLaunchArgument(
-        'camera_info_topic',
-        default_value='/camera_info'
-    )
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-  
-    config = DeclareLaunchArgument(
+
+    camera_info_url = DeclareLaunchArgument(
         'camera_info_url',
         default_value=''
     )
 
+    camera_ns = LaunchConfiguration('camera_ns')
 
-    return LaunchDescription([
-        image_topic_launch_arg,
-        camera_url_launch_arg,
-        camera_info_launch_arg,
-        camera_info_topic_launch_arg,
-        config,
-        Node(
-            package='camera_images',
-            executable='camera_info_publisher',
-            name='cameraInfoPublisher',
-            output='screen',
-            parameters=[{'camera_info_url': LaunchConfiguration('camera_info_url'),
-                         }],
-            remappings=[
-                ('/camera_info', LaunchConfiguration('camera_info_topic'))
-            ]
-        ),
-        Node(
-            package='image_tools',
-            executable='showimage',
-            name='showImage',             
-            remappings=[
-                ('/image', LaunchConfiguration('image_topic'))
-            ]
-        ),         
-        Node(
-            package='image_publisher', 
-            executable='image_publisher_node',
+    # the bug with camera_info_url was fixed on Jun 10, 2024
+    # but it is not yet in the package repository,
+    # so I downloaded the last version and just changed the name
+    image_publisher = Node(
+            package='im_publisher', 
+            executable='im_publisher_node',
             name='webCam',
             output='screen',
+            namespace = camera_ns,
             arguments=[LaunchConfiguration('camera_url')],                      
-            parameters=[{'use_sim_time': use_sim_time,
-                         'publish_rate': 30.0,
-                         }],
-            remappings=[('image_raw', LaunchConfiguration('image_topic')),
-                        ('camera_info', 'false_camera_info')]),
-        
-    ])
+            parameters=[{'publish_rate': 30.0,
+                         'camera_info_url': LaunchConfiguration('camera_info_url')
+                        }],
+        )
+
+    image_rectifier = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('camera_images'),
+                    'launch',
+                    'image_proc.launch.py'
+                ])
+            ]),
+            launch_arguments={
+                'namespace': 'camera'
+            }.items()
+        )
+    
+    show_images = Node(
+            package='image_view',
+            executable='image_view',
+            name='showImage',
+            namespace = camera_ns,
+            remappings=[
+                ('image', 'image_rect_color')
+            ]
+        )
+
+    return LaunchDescription([
+        arg_namespace,
+        camera_info_url,
+        camera_url_launch_arg,
+        image_publisher,
+        image_rectifier,
+        show_images,
+        ])

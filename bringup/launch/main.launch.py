@@ -8,12 +8,7 @@ from launch.substitutions import PathJoinSubstitution
 
 def generate_launch_description():
     
-    config = PathJoinSubstitution([
-                    FindPackageShare('bringup'),
-                    'config',
-                    'camera_info.yaml'
-                ])
-
+    
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
@@ -24,10 +19,9 @@ def generate_launch_description():
                 ])
             ]),
             launch_arguments={
-                'image_topic': '/camera/image',
+                'camera_ns': 'camera',
                 'camera_url': 'http://192.168.0.30:4747/video?320x240',
-                'camera_info_url': config,
-                'camera_info_topic': '/camera/camera_info'
+                'camera_info_url': 'package://bringup/config/camera_info.yaml'
             }.items()
         )
     ])
