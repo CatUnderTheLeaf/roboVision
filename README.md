@@ -6,7 +6,8 @@
  - [x] publish camera_info as `sensor_msgs.CameraInfo`
  - [x] rectify image to remove distortions
  - [x] view rectified image
- - [ ] run YOLO in the inference mode
+ - [x] run YOLO in the inference mode
+ - [ ] make detection with YOLO faster, because now `yolo-detector` node publishes images with ~10 Hz
 
 
 
