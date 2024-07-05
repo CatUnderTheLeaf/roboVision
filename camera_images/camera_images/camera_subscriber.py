@@ -16,7 +16,7 @@ class CamSubscriber(Node):
         self.bridge = CvBridge()
         self.FPS_MS = int(0.1 * 1000)
 
-        self.subscription = self.create_subscription(Image, '/image', self.img_callback, 1)
+        self.subscription = self.create_subscription(Image, 'image', self.img_callback, 1)
         
         
         # timer_period = 0.1 #1 / rate

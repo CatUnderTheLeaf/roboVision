@@ -17,7 +17,7 @@ class ImagePublisher(Node):
         self.cap = cv2.VideoCapture(camera_url, cv2.CAP_GSTREAMER)
         self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 2)
 
-        self.publisher_ = self.create_publisher(Image, "/image", 1)
+        self.publisher_ = self.create_publisher(Image, "image", 1)
         
         timer_period = 0.1 #1 / rate
         self.timer = self.create_timer(timer_period, self.timer_callback)
