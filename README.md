@@ -7,7 +7,8 @@
  - [x] rectify image to remove distortions
  - [x] view rectified image
  - [x] run YOLO in the inference mode
- - [ ] make detection with YOLO faster, because now `yolo-detector` node publishes images with ~10 Hz
+ - [x] using smaller model made detection with YOLO faster, from ~10 Hz to ~30 Hz
+ - [ ] find objects to detect and search for or create dataset
 
 
 

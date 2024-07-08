@@ -5,6 +5,7 @@ from sensor_msgs.msg import Image
 # import cv2
 from ros2_numpy import numpify, msgify
 from ultralytics import YOLOv10
+import torch
 
 class YoloDetector(Node):
 
@@ -17,8 +18,9 @@ class YoloDetector(Node):
             10)
         self.publisher_ = self.create_publisher(Image, 'detected_image', 10)
         # self.bridge = CvBridge()
-        self.model = YOLOv10.from_pretrained('jameslahm/yolov10x')
-        self.get_logger().info('YOLO Node has been started.')
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.model = YOLOv10.from_pretrained('jameslahm/yolov10s').to(device)
+        self.get_logger().info(f'YOLO Node has been started on {self.model.device.type}.')
 
     def image_callback(self, msg):
 
