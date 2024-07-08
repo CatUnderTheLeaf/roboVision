@@ -7,9 +7,7 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
 
-from launch import LaunchDescription
 
 
 def generate_launch_description():
@@ -49,7 +47,7 @@ def generate_launch_description():
     image_rectifier = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
-                FindPackageShare('camera_images'),
+                FindPackageShare('bringup'),
                 'launch',
                 'image_proc.launch.py'
             ])
@@ -69,33 +67,12 @@ def generate_launch_description():
         ]
     )
 
-    yolo_detector = Node(
-        package='yolo',
-        executable='yolo_detector',
-        name='yoloDetector',
-        namespace = camera_ns,
-        remappings=[
-            ('image', 'image_rect_color')
-        ]
-    )
-
-    show_detected_images = Node(
-        package='image_view',
-        executable='image_view',
-        name='showImage',
-        namespace = camera_ns,
-        remappings=[
-            ('image', 'detected_image')
-        ]
-    )
-
+    
     return LaunchDescription([
         arg_namespace,
         camera_info_url,
         camera_url_launch_arg,
         image_publisher,
         image_rectifier,
-        show_images,
-        yolo_detector,
-        show_detected_images
+        show_images
     ])
