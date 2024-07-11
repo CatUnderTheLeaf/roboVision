@@ -22,13 +22,23 @@ class YoloDetector(Node):
         self.model = YOLOv10.from_pretrained('jameslahm/yolov10s').to(device)
         self.get_logger().info(f'YOLO Node has been started on {self.model.device.type}.')
 
-    def image_callback(self, msg):
+        self.stream_url = 'http://192.168.0.30:4747/video?320x240'
 
-        array = numpify(msg)
-        # if self.publisher_.get_num_connections():
-        det_result = self.model(array)
-        det_annotated = det_result[0].plot(show=False)
-        self.publisher_.publish(msgify(Image, det_annotated, encoding="rgb8"))
+        rate = 30
+        timer_period = 1 / rate
+        self.timer = self.create_timer(timer_period, self.image_callback)
+
+
+    # def image_callback(self, msg):
+    def image_callback(self):
+
+        # array = numpify(msg)
+        # det_result = self.model(array)
+
+        det_result = self.model(self.stream_url, stream=True, stream_buffer=False, conf=0.1)
+        for result in det_result:
+            det_annotated = result.plot(show=False)
+            self.publisher_.publish(msgify(Image, det_annotated, encoding="rgb8"))
         # don't want to use CvBridge, it has some speed problems
 
         # try:
