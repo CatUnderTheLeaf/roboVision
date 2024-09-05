@@ -1,4 +1,4 @@
-# Plan for roboVision project
+# roboVision project
 
 A personalized voice-controlled robot-assistant. The base use-case scenarios:
 1. _Search_: user asks robot to find object -> robot navigates around to find this object -> robot reports back search status and information about the found object
@@ -12,47 +12,15 @@ I can build a LEGO Mindstorm robot (because I already have this one) with:
 - a radar to get approximation of objects pose
 - a bumper which presses a button if the collision is very near
 - a possibility to use a color sensor
-
-This project consists of 4 parts. Here is what should be done for each part (frequent updates):
--  __Computer Vision__ - detect objects specified by user, gets its 2D and 3D position
-   - [x] use a phone camera with an app which streams video over wifi
-   - [x] publish image from video stream as `sensor_msgs.Image`
-   - [x] calibrate camera with a checkboard
-   - [x] publish camera_info as `sensor_msgs.CameraInfo`
-   - [x] rectify image to remove distortions
-   - [x] view rectified image
-   - [x] run YOLO in the inference mode
-   - [x] using smaller model made detection with YOLO faster, from ~10 Hz to ~30 Hz
-   - [x] use Open-Vocabulary Detection with YOLO-World
-   - [x] publish image with detections
-   - [ ] publish 2D pose of detected objects
-   - [ ] compare usage between [YOLO-World](https://docs.ultralytics.com/models/yolo-world/) and ViLD by [Tensorflow](https://github.com/tensorflow/tpu/tree/master/models/official/detection/projects/vild)
-   - [ ] train on new dataset to have better inference results
-   - [ ] ? use image segmentation to make a map ? 
-- __Robotics__ - navigate robot around
-   - [ ] make diff-drive robot model
-   - [ ] find a solution to use ROS with LEGO Mindstorm bot using Wifi/USB (e.g. recieve only commands for wheels and perform them), because it is not possible to fully use ROS there
-   - [ ] publish odometry from robot
-   - [ ] implement simple commands as `move forward` or `turn 90 degrees clockwise`
-   - [ ] implement object-detection for collision-avoidance with radar
-   - [ ] convert 2D pose to 3D in the `world` frame of reference
-   - [ ] fuse 3D objects poses with radar information for better collision-avoidance
-- __Voice__ - recieve and pass voice commands from the user to the robot
-  - [ ] maybe use Alexa for this
-- __LLM__ - parse and generalize user prompts
-  - [ ] compare several models that can be launched locally (DistilBART and T5-Small )
-  - [ ] through summarization get generalized rules 
-
-
-
-
-
-
-
+  
+[Detailed plan and work-in-progress](https://github.com/users/CatUnderTheLeaf/projects/2)
 
 
 
 ---
+
+> For later reference, maybe I will need some commands
+
 A template project integrating ROS 2 and Gazebo simulator.
 
 ## Included packages
