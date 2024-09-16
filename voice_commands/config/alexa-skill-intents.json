@@ -1,0 +1,63 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "activate robot control",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": [
+                        "cancel"
+                    ]
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": [
+                        "stop"
+                    ]
+                },
+                {
+                    "name": "HelloWorldIntent",
+                    "slots": [],
+                    "samples": [
+                        "hello",
+                        "how are you",
+                        "say hi world",
+                        "say hi",
+                        "hi",
+                        "say hello world",
+                        "say hello"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "DriveIntent",
+                    "slots": [],
+                    "samples": [
+                        "drive backward",
+                        "drive forward"
+                    ]
+                },
+                {
+                    "name": "PauseIntent",
+                    "slots": [],
+                    "samples": [
+                        "pause",
+                        "robot stop"
+                    ]
+                }
+            ],
+            "types": []
+        }
+    }
+}

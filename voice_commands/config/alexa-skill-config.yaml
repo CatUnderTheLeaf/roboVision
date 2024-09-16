@@ -1,0 +1,5 @@
+# alexa skill-id should remain a secret
+skill_id: 'ADD-YOUR-OWN-SKILL-ID'
+
+# port to open for flask app if it differs from the default 5000
+flask_port: 80
