@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 from flask import Flask
+import yaml
+import sys
+import os
+from os import strerror
 from ask_sdk_core.skill_builder import SkillBuilder
 from flask_ask_sdk.skill_adapter import SkillAdapter
 
@@ -20,6 +24,22 @@ from rclpy.node import Node
 import threading
 
 threading.Thread(target=lambda: rclpy.init()).start()
+
+# load configuration
+# ugly method, but at least it works
+# idk why i can't read this path from args sent by launch
+path = os.path.join('/'.join((sys.argv[-1]).split('/')[:-3]), 'share', 'voice_commands', 'config', 'alexa-skill-config.yaml')
+try:
+    with open(path, mode="r") as f:
+        config = yaml.safe_load(f)
+except OSError as error:
+    print(strerror(error.errno))
+except yaml.YAMLError as exc:
+    print(exc)
+
+if config is None:
+    print('empty config file')
+    sys.exit()
 
 
 # action_client = ActionClient(Node("alexa_client"), ev3Task, "ev3_server")
@@ -70,18 +90,16 @@ class DriveIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "I am moving"
+        speech_text = "Ok, I'm moving"
 
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Drive", speech_text)).set_should_end_session(
-            True)
-        
-        # goal = ev3Task.Goal()
-        # goal.task_number=1
-        # action_client.send_goal_async(goal)
+            False)
 
-        pub.publish("Request to drive")
-        pub.get_logger().info("Request to drive")
+        # goal = ArduinobotTask.Goal()
+        # goal.task_number = 1
+        # action_client.send_goal_async(goal)
+        pub.get_logger().info("DriveIntent in action")
 
         return handler_input.response_builder.response
 
@@ -92,17 +110,39 @@ class StopIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speech_text = "stop moving"
+        speech_text = "ending control"
 
         handler_input.response_builder.speak(speech_text).set_card(
-            SimpleCard("Stop", speech_text)).set_should_end_session(
+            SimpleCard("End", speech_text)).set_should_end_session(
             True)
         
         # goal = ev3Task.Goal()
         # goal.task_number=0
         # action_client.send_goal_async(goal)
 
-        pub.publish("Request to stop")
+        # pub.publish("Request to stop")
+        pub.get_logger().info("Request to end control")
+
+        return handler_input.response_builder.response
+
+class PauseIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("PauseIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        speech_text = "stop moving"
+
+        handler_input.response_builder.speak(speech_text).set_card(
+            SimpleCard("stop moving", speech_text)).set_should_end_session(
+            False)
+        
+        # goal = ev3Task.Goal()
+        # goal.task_number=0
+        # action_client.send_goal_async(goal)
+
+        # pub.publish("Request to stop")
         pub.get_logger().info("Request to stop")
 
         return handler_input.response_builder.response
@@ -115,10 +155,8 @@ class AllExceptionHandler(AbstractExceptionHandler):
 
     def handle(self, handler_input, exception):
         # type: (HandlerInput, Exception) -> Response
-        # Log the exception in CloudWatch Logs
-        print(exception)
 
-        speech = "Sorry, please repeat!!"
+        speech = "Hmm, I don't know that. Can you please say it again?"
         handler_input.response_builder.speak(speech).ask(speech)
         return handler_input.response_builder.response
 
@@ -126,10 +164,11 @@ app = Flask(__name__)
 skill_builder = SkillBuilder()
 skill_builder.add_request_handler(LaunchRequestHandler())
 skill_builder.add_request_handler(DriveIntentHandler())
+skill_builder.add_request_handler(PauseIntentHandler())
 skill_builder.add_request_handler(StopIntentHandler())
 skill_builder.add_exception_handler(AllExceptionHandler())
 
-skill_adapter = SkillAdapter(skill=skill_builder.create(), skill_id="", app=app)
+skill_adapter = SkillAdapter(skill=skill_builder.create(), skill_id=config['skill_id'], app=app)
 
 @app.route("/")
 def invoke_skill():
@@ -138,9 +177,8 @@ def invoke_skill():
 skill_adapter.register(app=app, route="/")
 
 
-
 def main(args=None):
-    app.run()
+    app.run(port=config['flask_port'])
 
 
 if __name__ == '__main__':
