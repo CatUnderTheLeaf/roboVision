@@ -2,17 +2,20 @@
 <robot name="sam_bot" xmlns:xacro="http://ros.org/wiki/xacro">
  
     <!-- Define robot constants -->
-    <xacro:property name="base_width" value="0.31"/>
-    <xacro:property name="base_length" value="0.42"/>
-    <xacro:property name="base_height" value="0.18"/>
+    <!-- stud=0.008, w=13, l=17, h=14 -->
+    <!-- center (8.5, 6.5, 7)*0.008 -->
 
-    <xacro:property name="wheel_radius" value="0.10"/>
-    <xacro:property name="wheel_width" value="0.04"/>
-    <xacro:property name="wheel_ygap" value="0.025"/>
-    <xacro:property name="wheel_zoff" value="0.05"/>
-    <xacro:property name="wheel_xoff" value="0.12"/>
+    <xacro:property name="base_width" value="0.104"/>
+    <xacro:property name="base_length" value="0.136"/> 
+    <xacro:property name="base_height" value="0.112"/>
 
-    <xacro:property name="caster_xoff" value="0.14"/>
+    <xacro:property name="wheel_radius" value="0.0216"/>
+    <xacro:property name="wheel_width" value="0.021"/>
+    <xacro:property name="wheel_ygap" value="0.011"/>
+    <xacro:property name="wheel_zoff" value="0.044"/>
+    <xacro:property name="wheel_xoff" value="0.04"/>
+
+    <xacro:property name="caster_xoff" value="0.076"/>
 
     <!-- Define inertial property macros  -->
     <xacro:macro name="box_inertia" params="m w h d">
@@ -96,8 +99,8 @@
         </joint>
     </xacro:macro>
 
-    <xacro:wheel prefix="drivewhl_l" x_reflect="-1" y_reflect="1" />
-    <xacro:wheel prefix="drivewhl_r" x_reflect="-1" y_reflect="-1" />
+    <xacro:wheel prefix="drivewhl_l" x_reflect="1" y_reflect="1" />
+    <xacro:wheel prefix="drivewhl_r" x_reflect="1" y_reflect="-1" />
   
     <!-- Caster Wheel -->
     <link name="front_caster">
@@ -122,7 +125,7 @@
     <joint name="caster_joint" type="fixed">
         <parent link="base_link"/>
         <child link="front_caster"/>
-        <origin xyz="${caster_xoff} 0.0 ${-(base_height/2)}" rpy="0 0 0"/>
+        <origin xyz="${-caster_xoff} 0.0 ${-(base_height/2)}" rpy="0 0 0"/>
     </joint>
 
 
