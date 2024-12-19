@@ -44,15 +44,15 @@ def generate_launch_description():
         ),
 
         # launch ros2mqtt bridge
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource([
-        #         PathJoinSubstitution([
-        #             FindPackageShare('mqtt_communication'),
-        #             'launch',
-        #             'mqtt.launch.py'
-        #         ])
-        #     ])            
-        # ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('mqtt_communication'),
+                    'launch',
+                    'mqtt.launch.py'
+                ])
+            ])            
+        ),
         # IncludeLaunchDescription(
         #     PythonLaunchDescriptionSource([
         #         PathJoinSubstitution([

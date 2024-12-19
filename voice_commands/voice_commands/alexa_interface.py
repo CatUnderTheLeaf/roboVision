@@ -1,9 +1,11 @@
-#!/usr/bin/env python3
+# #!/usr/bin/env python3
 
 from flask import Flask
 import yaml
 import sys
 import os
+import signal
+from threading import Thread
 from os import strerror
 from ask_sdk_core.skill_builder import SkillBuilder
 from flask_ask_sdk.skill_adapter import SkillAdapter
@@ -15,20 +17,38 @@ from ask_sdk_model import Response
 from ask_sdk_model.ui import SimpleCard
 
 import rclpy
-from rclpy.node import Node
-# from rclpy.action import ActionClient
-# from std_msgs.msg import String
+from std_msgs.msg import String
 
-# from ev3_msgs.action import ev3Task
 
-import threading
+# from actions_ev3.action import EV3bot
 
-threading.Thread(target=lambda: rclpy.init()).start()
+# Initializing the node
+rclpy.init(args=None)
+node = rclpy.create_node('alexa_publisher_node', namespace="/")
 
-# load configuration
-# ugly method, but at least it works
-# idk why i can't read this path from args sent by launch
-path = os.path.join('/'.join((sys.argv[-1]).split('/')[:-3]), 'share', 'voice_commands', 'config', 'alexa-skill-config.yaml')
+# Starting the Thread with a target in the node
+Thread(target=lambda:node).start() 
+
+pub = node.create_publisher(String, '/ping/primitive', 1)
+
+def send_command(task):
+    # Task numbers:
+    # 0 - stop the robot
+    # 1 - move forwards
+    # 2 - move backwards
+    # 3 - turn left degrees
+    # 4 - turn right degrees
+    # q - quit the robot
+    # speak - greetings phrase
+    rclpy.spin_once(node,timeout_sec=1.0)
+
+    new_message = String()
+    new_message.data = task
+    pub.publish(new_message)
+
+
+# config file
+path = node.declare_parameter('config', '/').value
 try:
     with open(path, mode="r") as f:
         config = yaml.safe_load(f)
@@ -42,26 +62,6 @@ if config is None:
     sys.exit()
 
 
-# action_client = ActionClient(Node("alexa_client"), ev3Task, "ev3_server")
-
-class CmdVelPublisher(Node):
-    def __init__(self):
-        super().__init__('cmd_vel_publisher')
-
-        # Publisher for the camera info
-        # self.publisher_ = self.create_publisher(String, 'cmd_vel', 1)
-
-#     def publish(self, msg):
-#         # Add timestamp to camera info message
-#         cmd_vel_msg = String()
-#         # camera_info_msg.header.stamp = self.get_clock().now().to_msg()
-#         # camera_info_msg.header.frame_id = 'camera'
-#         cmd_vel_msg.data = msg
-        
-#         self.publisher_.publish(cmd_vel_msg)
-
-pub = CmdVelPublisher()
-
 class LaunchRequestHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
@@ -74,12 +74,11 @@ class LaunchRequestHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Hello World", speech_text)).set_should_end_session(
             False)
+        # rclpy.spin_once(node,timeout_sec=1.0)
+
+        send_command("speak")
         
-        # goal = ev3Task.Goal()
-        # goal.task_number=0
-        # action_client.send_goal_async(goal)
-        # pub.publish("Launch request to control")
-        pub.get_logger().info("Launch request to control")
+        node.get_logger().info("Launch request to control")
 
         return handler_input.response_builder.response
 
@@ -95,11 +94,10 @@ class DriveIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech_text).set_card(
             SimpleCard("Drive", speech_text)).set_should_end_session(
             False)
+        
+        send_command("1")
 
-        # goal = ArduinobotTask.Goal()
-        # goal.task_number = 1
-        # action_client.send_goal_async(goal)
-        pub.get_logger().info("DriveIntent in action")
+        node.get_logger().info("DriveIntent in action")
 
         return handler_input.response_builder.response
 
@@ -116,12 +114,8 @@ class StopIntentHandler(AbstractRequestHandler):
             SimpleCard("End", speech_text)).set_should_end_session(
             True)
         
-        # goal = ev3Task.Goal()
-        # goal.task_number=0
-        # action_client.send_goal_async(goal)
-
-        # pub.publish("Request to stop")
-        pub.get_logger().info("Request to end control")
+        send_command("q")
+        node.get_logger().info("Request to end control")
 
         return handler_input.response_builder.response
 
@@ -138,12 +132,8 @@ class PauseIntentHandler(AbstractRequestHandler):
             SimpleCard("stop moving", speech_text)).set_should_end_session(
             False)
         
-        # goal = ev3Task.Goal()
-        # goal.task_number=0
-        # action_client.send_goal_async(goal)
-
-        # pub.publish("Request to stop")
-        pub.get_logger().info("Request to stop")
+        send_command("0")
+        node.get_logger().info("Request to stop")
 
         return handler_input.response_builder.response
 
@@ -156,6 +146,7 @@ class AllExceptionHandler(AbstractExceptionHandler):
     def handle(self, handler_input, exception):
         # type: (HandlerInput, Exception) -> Response
 
+        send_command("0")
         speech = "Hmm, I don't know that. Can you please say it again?"
         handler_input.response_builder.speak(speech).ask(speech)
         return handler_input.response_builder.response
@@ -183,3 +174,10 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
+## Function that finish the actual context
+def signal_handler(signal, frame):
+    rclpy.shutdown()
+    sys.exit(0)
+
+signal.signal(signal.SIGINT,signal_handler) # Calls the 'signal_handler' and finish the actual signal (like a Ctrl + C)
