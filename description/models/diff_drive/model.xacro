@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="sam_bot" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="lego_bot" xmlns:xacro="http://ros.org/wiki/xacro">
  
     <!-- Define robot constants -->
     <!-- stud=0.008, w=13, l=17, h=14 -->
@@ -40,6 +40,15 @@
             <inertia ixx="${(2/5) * m * (r*r)}" ixy="0.0" ixz="0.0" iyy="${(2/5) * m * (r*r)}" iyz="0.0" izz="${(2/5) * m * (r*r)}"/>
         </inertial>
     </xacro:macro>
+
+    <!-- dummy link without inertia for usage with KDL -->
+    <!-- <link name="base_link_without_inertia"/>
+
+    <joint name="base_link_without_inertia_joint" type="fixed">
+        <parent link="base_link_without_inertia"/>
+        <child link="base_link"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    </joint> -->
 
     <!-- Robot Base -->
     <link name="base_link">
