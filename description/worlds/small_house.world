@@ -2,6 +2,30 @@
 
 <sdf version='1.6'>
   <world name='default'>
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin
+      filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+
+
+
     <!-- override the default position of the camera !-->
     <gui>
       <camera name='gzclient_camera'>
@@ -42,7 +66,7 @@
         <pose frame=''>-9.199410 2.411230 2.084544 0 -0 0</pose>
 	</model>
 	
-	<model name='AirconditionerB_01_001'>
+	 <model name='AirconditionerB_01_001'>
         <static>true</static>    
         <include>
             <uri>model://aws_robomaker_residential_AirconditionerB_01</uri>
@@ -56,18 +80,7 @@
         </include>
         <pose frame=''>3.295503 4.225674 0.318684 0 -0 0</pose>
 	</model>
-    
-    <!-- quick test ball for turtlebot3 -->
-    <!-- 
-	<model name='Ball_01_002'>
-        <include>
-            <uri>model://aws_robomaker_residential_Ball_01</uri>
-        </include>
-        <pose frame=''>-3.665503 -0.4874 0.318684 0 -0 0</pose>
-	</model>
-    -->
 
-    <!-- bedroom ball -->
   <model name='Ball_01_003'>
         <static>true</static>      
         <include>
@@ -103,16 +116,6 @@
         </include>
         <pose frame=''>2.779073 -5.392703 1.538173 0 -0 0</pose>
 	</model>
-	
-    <!-- Remove ceiling for easier view
-	<model name='RoomCeiling_01_001'>
-        <static>true</static>
-        <include>
-            <uri>model://aws_robomaker_residential_RoomCeiling_01</uri>
-        </include>
-        <pose frame=''>0 0 2.5 0 -0 0</pose>
-	</model>
-    -->
 	
 	<model name='ChairA_01_001'>
         <static>true</static>    
@@ -378,15 +381,7 @@
         <pose frame=''>-0.138245 -5.4443710 2.000000 0 -0 0</pose>
 	</model>
 	
-    <!-- 
-    Wall & Desk Portraits: 
-
-    They're copies rather than instances, however, they still use
-    the same collada files. This way, we can individually change each
-    portrait image by replacing the texture files. Remember that the 
-    texture file name needs to be the same.
-    -->
-     <!-- WALL -->
+    
 	<model name='PortraitA_01'>
         <static>true</static>    
         <include>
@@ -465,7 +460,6 @@
         <pose frame=''>-6.193025 -1.590208 0.3 0 -0 0.004290</pose>
 	</model>
 
-    <!-- DESK -->
 	<model name='DeskPortraitA_01'>
         <static>true</static>    
         <include>
@@ -537,7 +531,7 @@
         </include>
 	<pose frame=''>2.486270 -5.102525 -0.012660 -0.336621 0.000000 3.046798</pose>
 	</model>
-    <!-- Wall & Desk Portraits END -->
+    
 
 	<model name='Rangehood_01_001'>
         <static>true</static>    
@@ -615,9 +609,7 @@
         <include>
             <uri>model://aws_robomaker_residential_TVCabinet_01</uri>
         </include>
-        <!-- 
-        <pose frame=''>0.615509 -5.105954 -0.011049 0 -0 1.5700</pose>
-        -->
+        
         <pose frame=''>0.629509 -5.183576 -0.017049 0 -0 1.5792</pose>
 	</model>
 	<model name='Vase_01_001'>
@@ -708,22 +700,8 @@
         <pose frame=''>-2.396624 4.387607 0.502739 0 -0 0</pose>
 	</model>
 
-    <!-- Lights !-->
-    <!--
-    <light name='sun' type='directional'>
-      <cast_shadows>1</cast_shadows>
-      <pose frame=''>0 0 10 0 -0 0</pose>
-      <diffuse>0.8 0.8 0.8 1</diffuse>
-      <specular>0.2 0.2 0.2 1</specular>
-      <attenuation>
-        <range>1000</range>
-        <constant>0.9</constant>
-        <linear>0.01</linear>
-        <quadratic>0.001</quadratic>
-      </attenuation>
-      <direction>-0.5 0.1 -0.9</direction>
-    </light>
-    !-->
+
+
     <light name='LivingRoom_CeilingLight_0' type='point'>
       <pose frame=''>1.194296 4.155759 2.2 0 -0 0</pose>
       <diffuse>0.5 0.5 0.5 1</diffuse>
