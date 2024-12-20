@@ -42,16 +42,16 @@
     </xacro:macro>
 
     <!-- dummy link without inertia for usage with KDL -->
-    <!-- <link name="base_link_without_inertia"/>
+    <!-- <link name="base_center_link_without_inertia"/>
 
-    <joint name="base_link_without_inertia_joint" type="fixed">
-        <parent link="base_link_without_inertia"/>
-        <child link="base_link"/>
+    <joint name="base_center_link_without_inertia_joint" type="fixed">
+        <parent link="base_center_link_without_inertia"/>
+        <child link="base_center_link"/>
         <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
     </joint> -->
 
     <!-- Robot Base -->
-    <link name="base_link">
+    <link name="base_center_link">
         <visual>
             <geometry>
                 <box size="${base_length} ${base_width} ${base_height}"/>
@@ -66,16 +66,16 @@
             </geometry>
         </collision>
 
-        <xacro:box_inertia m="15" w="${base_width}" d="${base_length}" h="${base_height}"/>
+        <xacro:box_inertia m="1" w="${base_width}" d="${base_length}" h="${base_height}"/>
     </link>
 
     <!-- Robot Footprint -->
-    <link name="base_footprint"/>
+    <link name="base_link"/>
 
     <joint name="base_joint" type="fixed">
         <parent link="base_link"/>
-        <child link="base_footprint"/>
-        <origin xyz="0.0 0.0 ${-(wheel_radius+wheel_zoff)}" rpy="0 0 0"/>
+        <child link="base_center_link"/>
+        <origin xyz="0.0 0.0 ${wheel_radius+wheel_zoff}" rpy="0 0 0"/>
     </joint>
 
     <!-- Wheels -->
@@ -97,11 +97,11 @@
             </geometry>
         </collision>
 
-        <xacro:cylinder_inertia m="0.5" r="${wheel_radius}" h="${wheel_width}"/>
+        <xacro:cylinder_inertia m="0.25" r="${wheel_radius}" h="${wheel_width}"/>
         </link>
 
         <joint name="${prefix}_joint" type="continuous">
-            <parent link="base_link"/>
+            <parent link="base_center_link"/>
             <child link="${prefix}_link"/>
             <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap)} ${-wheel_zoff}" rpy="0 0 0"/>
             <axis xyz="0 1 0"/>
@@ -128,11 +128,11 @@
             </geometry>
         </collision>
 
-        <xacro:sphere_inertia m="0.5" r="${(wheel_radius+wheel_zoff-(base_height/2))}"/>
+        <xacro:sphere_inertia m="0.25" r="${(wheel_radius+wheel_zoff-(base_height/2))}"/>
     </link>
 
     <joint name="caster_joint" type="fixed">
-        <parent link="base_link"/>
+        <parent link="base_center_link"/>
         <child link="front_caster"/>
         <origin xyz="${-caster_xoff} 0.0 ${-(base_height/2)}" rpy="0 0 0"/>
     </joint>
