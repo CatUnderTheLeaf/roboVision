@@ -1,19 +1,19 @@
 <?xml version="1.0" ?>
 <sdf version="1.6">
   <model name="aws_robomaker_residential_ShoeRack_01">
-    <link name="link">
+    <link name="ShoeRack_01">
 
       <inertial>
-        <mass>6</mass>
-          <inertia>
-            <ixx>0.02</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.04</iyy>
-            <iyz>0</iyz>
-            <ixx>0.02</ixx>
-          </inertia>
-      </inertial>
+        <mass>8.1</mass>
+	<inertia>
+	    <ixx>  1.3412920773e+00 </ixx>
+	    <ixy> -0.0000000000e+00 </ixy>
+	    <ixz>  0.0000000000e+00 </ixz>
+	    <iyy>  2.3413254318e+00 </iyy>
+	    <iyz>  0.0000000000e+00 </iyz>
+	    <izz>  1.0000339302e+00 </izz>
+	  </inertia>
+	</inertial>
 
       <collision name="collision">
 

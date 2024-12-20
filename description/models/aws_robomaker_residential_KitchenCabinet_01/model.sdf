@@ -4,7 +4,15 @@
     <link name="link">
       <inertial>
         <mass>1</mass>
-      </inertial>
+	<inertia>
+	    <ixx>  1.0168440299e+00 </ixx>
+	    <ixy> -7.6425744877e-04 </ixy>
+	    <ixz>  3.9723161102e-01 </ixz>
+	    <iyy>  1.4853953831e+00 </iyy>
+	    <iyz>  1.1100048935e-03 </iyz>
+	    <izz>  6.0507693907e-01 </izz>
+	  </inertia>
+	</inertial>
       <collision name="collision">
         <laser_retro>0</laser_retro>
         <max_contacts>10</max_contacts>
