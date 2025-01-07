@@ -1,10 +1,14 @@
 from launch_ros.substitutions import FindPackageShare
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, ExecuteProcess, DeclareLaunchArgument, AppendEnvironmentVariable
+from launch.actions import IncludeLaunchDescription, ExecuteProcess, DeclareLaunchArgument, AppendEnvironmentVariable, LogInfo, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.event_handlers import (OnExecutionComplete, OnProcessExit,
+                                OnProcessIO, OnProcessStart, OnShutdown)
 from launch.substitutions import Command, PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
+
+# from ros_gz_bridge.actions import RosGzBridge
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -12,6 +16,7 @@ def generate_launch_description():
     
     pkg_project_bringup = get_package_share_directory('bringup')
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    pkg_project_description = get_package_share_directory('description')
 
     world = PathJoinSubstitution([
                 FindPackageShare('description'),
@@ -23,7 +28,7 @@ def generate_launch_description():
     set_env_vars_resources = AppendEnvironmentVariable(
             'GZ_SIM_RESOURCE_PATH',
             PathJoinSubstitution([
-                get_package_share_directory('description'),
+                pkg_project_description,
                 'models'
             ])
     )
@@ -66,8 +71,8 @@ def generate_launch_description():
         'model', default_value='model.xacro',
         description='Absolute path to robot urdf file')
 
-    pkg_project_description = get_package_share_directory('description')
-    default_model_path  =  PathJoinSubstitution([pkg_project_description, 'models', 'diff_drive', LaunchConfiguration('model')])
+    
+    default_model_path  =  PathJoinSubstitution([pkg_project_description, 'models', 'legobot', LaunchConfiguration('model')])
     
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
@@ -87,6 +92,44 @@ def generate_launch_description():
         ],
         output='screen',
     )
+    import os
+    # bridge between ros2 and gazebo fortress
+    bridge_params = os.path.join(
+        pkg_project_bringup,
+        'config',
+        'gazebo_bridge.yaml'
+)
+    
+    # PathJoinSubstitution([
+    #     pkg_project_bringup,
+    #     'config',
+    #     'gazebo_bridge.yaml'
+    #     ])
+
+    start_gazebo_ros_bridge_cmd = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '--ros-args',
+            '-p',
+            'config_file:='+bridge_params,
+        ],
+        output='screen',
+    )
+
+    # Bridge
+    # ros_gz_bridge = RosGzBridge(
+    #     bridge_name='ros_gz_bridge',
+    #     config_file=bridge_params,
+    # )
+
+    # add camera image bridge
+    # start_gazebo_ros_image_bridge_cmd = Node(
+    #     package='ros_gz_image',
+    #     executable='image_bridge',
+    #     arguments=['/camera/image_raw'],
+    #     output='screen',
+    # )
 
     robot_localization_node = Node(
        package='robot_localization',
@@ -97,42 +140,39 @@ def generate_launch_description():
            PathJoinSubstitution([pkg_project_bringup, 'config/ekf.yaml']), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
     )
 
-
+    load_rviz = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('bringup'),
+                    'launch',
+                    'rviz.launch.py'
+                ])
+            ]),            
+        ),
 
     return LaunchDescription([
 
         set_env_vars_resources,
         gzserver_cmd,
         gzclient_cmd,
-        declare_x_position_cmd,
-        declare_y_position_cmd,
-        declare_model,
-        robot_state_publisher_node,
-        start_gazebo_ros_spawner_cmd
-
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource([
-        #         PathJoinSubstitution([
-        #             FindPackageShare('bringup'),
-        #             'launch',
-        #             'diff_drive.launch.py'
-        #         ])
-        #     ]),
-        #     launch_arguments={
-        #         'model': arg_model_name,
-        #         'rviz': 'False'
-        #     }.items()
-        # ),
-
+        RegisterEventHandler(
+            OnExecutionComplete(
+                target_action=gzserver_cmd,
+                on_completion=[
+                    LogInfo(msg='gzserver_cmd finished'),
+                    declare_x_position_cmd,
+                    declare_y_position_cmd,
+                    declare_model,
+                    robot_state_publisher_node,
+                    start_gazebo_ros_spawner_cmd,           
+                ]
+            )
+        ),
+        
+        start_gazebo_ros_bridge_cmd,    
+        
+        
         # robot_localization_node,
-
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource([
-        #         PathJoinSubstitution([
-        #             FindPackageShare('bringup'),
-        #             'launch',
-        #             'rviz.launch.py'
-        #         ])
-        #     ]),            
-        # ),
+        # load_rviz
+        
     ])
