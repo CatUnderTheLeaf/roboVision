@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lego_bot">
+  <xacro:arg name="use_mock_hardware" default="true" />
+
+  <xacro:include filename="$(find description)/models/legobot/legobot.xacro" />
+
+  <!-- Import Rviz colors -->
+  <!-- <xacro:include filename="$(find description)/diffbot/urdf/diffbot.materials.xacro" /> -->
+
+  <!-- macro for ros2_control  -->
+  <xacro:macro name="legobot_ros2_control" params="name prefix use_mock_hardware">
+
+    <ros2_control name="${name}" type="system">
+      <xacro:unless value="${use_mock_hardware}">
+        <hardware>
+          <plugin>description/LegoBotSystemHardware</plugin>
+          <param name="example_param_hw_start_duration_sec">0</param>
+          <param name="example_param_hw_stop_duration_sec">3.0</param>
+        </hardware>
+      </xacro:unless>
+      <xacro:if value="${use_mock_hardware}">
+        <hardware>
+          <plugin>mock_components/GenericSystem</plugin>
+          <param name="calculate_dynamics">true</param>
+        </hardware>
+      </xacro:if>
+      <joint name="${prefix}_l_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}_r_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+
+  </xacro:macro>
+
+  <xacro:legobot_ros2_control name="LegoBot" prefix="drivewhl" use_mock_hardware="$(arg use_mock_hardware)"/>
+  
+</robot>
