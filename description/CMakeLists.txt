@@ -48,7 +48,7 @@ install(
   DESTINATION include/description
 )
 install(
-  DIRECTORY config models
+  DIRECTORY config models launch
   DESTINATION share/description
 )
 
