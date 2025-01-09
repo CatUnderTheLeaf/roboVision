@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<robot name="lego_bot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<!-- include robot urdf -->
+<xacro:include filename="$(find description)/models/legobot/legobot.xacro" />
+
+
+<!-- macro for ros2_control  -->
+  <xacro:macro name="legobot_ros2_control" params="name prefix use_mock_hardware">
+
+    <ros2_control name="${name}" type="system">
+      <xacro:unless value="${use_mock_hardware}">
+        <!-- <hardware>
+          <plugin>description/LegoBotSystemHardware</plugin>
+          <param name="example_param_hw_start_duration_sec">0</param>
+          <param name="example_param_hw_stop_duration_sec">3.0</param>
+        </hardware> -->
+        <hardware>
+          <plugin>ign_ros2_control/IgnitionSystem</plugin>
+        </hardware>
+      </xacro:unless>
+      <xacro:if value="${use_mock_hardware}">
+        <hardware>
+          <plugin>mock_components/GenericSystem</plugin>
+          <param name="calculate_dynamics">true</param>
+        </hardware>
+      </xacro:if>
+      <joint name="${prefix}_l_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}_r_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+
+  </xacro:macro>
+
+  <xacro:legobot_ros2_control name="LegoBot" prefix="drivewhl" use_mock_hardware="$(arg use_mock_hardware)"/>
+
+<gazebo>
+  <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+    <robot_param>robot_description</robot_param>
+    <robot_param_node>robot_state_publisher</robot_param_node>
+    <parameters>$(find description)/config/legobot_controllers.yaml</parameters>
+  </plugin>
+</gazebo>
+
+<!-- <plugin filename="gz-sim-joint-state-publisher-system"
+  name="gz::sim::systems::JointStatePublisher">
+  <topic>/joint_states</topic> 
+  <joint_name>drivewhl_l_joint</joint_name>
+  <joint_name>drivewhl_r_joint</joint_name>
+</plugin> -->
+
+
+<!-- <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive"> -->
+  <!-- Remove <ros> tag. -->
+
+  <!-- wheels -->
+  <!-- <left_joint>drivewhl_l_joint</left_joint>
+  <right_joint>drivewhl_r_joint</right_joint> -->
+
+  <!-- kinematics -->
+  <!-- <wheel_separation>0.104</wheel_separation>
+  <wheel_radius>0.0432</wheel_radius> computed from <wheel_diameter> in the original plugin -->
+
+  <!-- limits -->
+  <!-- <max_linear_acceleration>0.033</max_linear_acceleration> computed from <max_linear_acceleration> in the original plugin -->
+
+  <!-- <topic>cmd_vel</topic> from <commant_topic> -->
+
+  <!-- <odom_topic>sim/odom</odom_topic> from <odometry_topic> -->
+  <!-- <frame_id>odom</frame_id> from <odometry_frame> -->
+  <!-- <child_frame_id>base_link</child_frame_id> from <robot_base_frame> -->
+  <!-- <odom_publisher_frequency>30</odom_publisher_frequency> from <update_rate> -->
+
+  <!-- <tf_topic>sim/tf</tf_topic> -->
+  <!-- Short topic name for tf output -->
+
+<!-- </plugin> -->
+</robot>

@@ -9,7 +9,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(DIRECTORY models worlds photos
+install(DIRECTORY models worlds photos launch
     DESTINATION share/${PROJECT_NAME}
 )
  

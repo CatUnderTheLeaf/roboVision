@@ -1,0 +1,9 @@
+<library path="gz_description">
+  <class name="gz_description/GZLegoBotSystemHardware"
+         type="gz_description::GZLegoBotSystemHardware"
+         base_class_type="ign_ros2_control::IgnitionSystemInterface">
+    <description>
+      The gz_ros2_control LegoBot plugin using a system hardware interface-type. It uses velocity command and position state interface.
+    </description>
+  </class>
+</library>
