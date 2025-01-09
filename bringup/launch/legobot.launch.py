@@ -11,56 +11,6 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_project_description = FindPackageShare('description')
-    pkg_project_bringup = FindPackageShare('bringup')
-    
-    default_model_path  =  PathJoinSubstitution([pkg_project_description, 'models', LaunchConfiguration('model')])
-    default_rviz_config_path = PathJoinSubstitution([pkg_project_bringup, 'config', LaunchConfiguration('rvizconfig')])
-    default_controllers_config_path = PathJoinSubstitution([pkg_project_description, 'config', LaunchConfiguration('controllers_config')])
-
-    robot_description = Command(['xacro ', default_model_path, ' use_mock_hardware:=', LaunchConfiguration('use_mock_hardware')]) 
-
-    control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[default_controllers_config_path],
-        output="both",
-        remappings=[
-            ("~/robot_description", "/robot_description"),
-            ("/legobot_diff_controller/cmd_vel", "/cmd_vel"),
-        ],
-    )
-
-    robot_state_publisher_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-            {'robot_description': robot_description}
-        ],
-        output='both'
-    )
-
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-    )
-
-    robot_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["legobot_diff_controller", "--controller-manager", "/controller_manager"],
-    )
-
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', default_rviz_config_path],
-        condition=IfCondition(LaunchConfiguration('rviz'))
-    )
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -92,20 +42,24 @@ def generate_launch_description():
             description="Start robot with mock hardware mirroring command to its states.",
         ),
         
-        control_node,
-        robot_state_publisher_node,
-        robot_controller_spawner,        
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=robot_controller_spawner,
-                on_exit=[joint_state_broadcaster_spawner],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[rviz_node],
-            )
+        # Launch legobot and rviz
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    pkg_project_description,
+                    'launch',
+                    'legobot.launch.py'
+                ])
+            ),
+            launch_arguments={
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                    'model': LaunchConfiguration('model'),
+                    'gui': LaunchConfiguration('gui'),
+                    'controllers_config': LaunchConfiguration('controllers_config'),
+                    'rviz': LaunchConfiguration('rviz'),
+                    'rvizconfig': LaunchConfiguration('rvizconfig'),
+                    'use_mock_hardware': LaunchConfiguration('use_mock_hardware'),
+                }.items()
         ),
 
     ])
