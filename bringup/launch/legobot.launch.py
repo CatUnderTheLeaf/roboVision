@@ -9,8 +9,21 @@ from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import Command, PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 
+
+
 def generate_launch_description():
     pkg_project_description = FindPackageShare('description')
+    pkg_project_bringup = FindPackageShare('bringup')
+
+    robot_localization_node = Node(
+       package='robot_localization',
+       executable='ekf_node',
+       name='ekf_filter_node',
+       output='screen',
+       parameters=[
+           PathJoinSubstitution([pkg_project_bringup, 'config/ekf.yaml']), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
+    )
+
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -61,5 +74,6 @@ def generate_launch_description():
                     'use_mock_hardware': LaunchConfiguration('use_mock_hardware'),
                 }.items()
         ),
+        robot_localization_node
 
     ])
