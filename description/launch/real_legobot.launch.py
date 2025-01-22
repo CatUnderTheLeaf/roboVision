@@ -14,20 +14,20 @@ def generate_launch_description():
     
     default_model_path  =  PathJoinSubstitution([pkg_project_description, 'models', LaunchConfiguration('model')])
     default_rviz_config_path = PathJoinSubstitution([pkg_project_description, 'config', LaunchConfiguration('rvizconfig')])
-    default_controllers_config_path = PathJoinSubstitution([pkg_project_description, 'config', LaunchConfiguration('controllers_config')])
+    # default_controllers_config_path = PathJoinSubstitution([pkg_project_description, 'config', LaunchConfiguration('controllers_config')])
 
-    robot_description = Command(['xacro ', default_model_path, ' use_mock_hardware:=', LaunchConfiguration('use_mock_hardware')]) 
+    robot_description = Command(['xacro ', default_model_path]) 
 
-    control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[default_controllers_config_path],
-        output="both",
-        remappings=[
-            ("~/robot_description", "/robot_description"),
-            ("/legobot_diff_controller/cmd_vel", "/cmd_vel"),
-        ],
-    )
+    # control_node = Node(
+    #     package="controller_manager",
+    #     executable="ros2_control_node",
+    #     parameters=[default_controllers_config_path],
+    #     output="both",
+    #     remappings=[
+    #         ("~/robot_description", "/robot_description"),
+    #         ("/legobot_diff_controller/cmd_vel", "/cmd_vel"),
+    #     ],
+    # )
 
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
@@ -40,17 +40,17 @@ def generate_launch_description():
         output='both'
     )
 
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-    )
+    # joint_state_broadcaster_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
+    # )
 
-    robot_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["legobot_diff_controller", "--controller-manager", "/controller_manager"],
-    )
+    # robot_controller_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["legobot_diff_controller", "--controller-manager", "/controller_manager"],
+    # )
 
     rviz_node = Node(
         package='rviz2',
@@ -66,29 +66,15 @@ def generate_launch_description():
             'use_sim_time', default_value='true',
             description='Use simulation clock if true'),
         DeclareLaunchArgument(
-            'model', default_value='legobot/legobot_with_controllers.xacro',
+            'model', default_value='legobot/legobot.xacro',
             description='Path to robot urdf file in the models dir'),
-        DeclareLaunchArgument(
-            'controllers_config', default_value='legobot_controllers.yaml',
-            description='Path to robot controllers config'),
         DeclareLaunchArgument(
             'rviz', default_value='True',
             description='Flag to open RViz.'),
         DeclareLaunchArgument(
             'rvizconfig', default_value='legobot.rviz',
             description='Absolute path to rviz config file'),
-        # !!!!! IMPORTANT !!!!!!
-        # If you work on a real robot and don’t have a simulator running, 
-        # it is often faster to use the mock_components/GenericSystem hardware component 
-        # instead of writing a custom one. Stop the launch file and start it again 
-        # with 'use_mock_hardware:=True'
-        DeclareLaunchArgument(
-            "use_mock_hardware",
-            default_value="false",
-            description="Start robot with mock hardware mirroring command to its states.",
-        ),
         
-        control_node,
         robot_state_publisher_node,
         # robot_controller_spawner,        
         # RegisterEventHandler(
@@ -97,12 +83,12 @@ def generate_launch_description():
         #         on_exit=[joint_state_broadcaster_spawner],
         #     )
         # ),
-        joint_state_broadcaster_spawner,
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[rviz_node],
-            )
-        ),
+        # RegisterEventHandler(
+        #     event_handler=OnProcessExit(
+        #         target_action=joint_state_broadcaster_spawner,
+        #         on_exit=[rviz_node],
+        #     )
+        # ),
+        rviz_node
 
     ])

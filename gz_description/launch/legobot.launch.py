@@ -61,10 +61,7 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('rviz'))
     )
 
-    return LaunchDescription([
-        DeclareLaunchArgument(
-            'gui', default_value='False',
-            description='Flag to enable joint_state_publisher_gui'),
+    return LaunchDescription([        
         DeclareLaunchArgument(
             'use_sim_time', default_value='true',
             description='Use simulation clock if true'),

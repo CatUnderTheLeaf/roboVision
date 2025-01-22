@@ -25,37 +25,18 @@ def generate_launch_description():
     )
 
 
-    return LaunchDescription([
-        DeclareLaunchArgument(
-            'gui', default_value='False',
-            description='Flag to enable joint_state_publisher_gui'),
+    return LaunchDescription([        
         DeclareLaunchArgument(
             'use_sim_time', default_value='true',
             description='Use simulation clock if true'),
         DeclareLaunchArgument(
-            'model', default_value='legobot/legobot_with_controllers.xacro',
-            description='Path to robot urdf file in the models dir'),
-        DeclareLaunchArgument(
-            'controllers_config', default_value='legobot_controllers.yaml',
-            description='Path to robot controllers config'),
-        DeclareLaunchArgument(
             'rviz', default_value='True',
             description='Flag to open RViz.'),
         DeclareLaunchArgument(
-            'rvizconfig', default_value='legobot.rviz',
-            description='Absolute path to rviz config file'),
-        # !!!!! IMPORTANT !!!!!!
-        # If you work on a real robot and don’t have a simulator running, 
-        # it is often faster to use the mock_components/GenericSystem hardware component 
-        # instead of writing a custom one. Stop the launch file and start it again 
-        # with 'use_mock_hardware:=True'
-        DeclareLaunchArgument(
-            "use_mock_hardware",
-            default_value="false",
-            description="Start robot with mock hardware mirroring command to its states.",
-        ),
+            'sim_legobot', default_value='false',
+            description='flag to launch the simulated in RVIZ legobot with ros2_control'),
         
-        # Launch legobot and rviz
+        # Launch simulated with ros2_control legobot and rviz
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 PathJoinSubstitution([
@@ -66,14 +47,38 @@ def generate_launch_description():
             ),
             launch_arguments={
                     'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'model': LaunchConfiguration('model'),
-                    'gui': LaunchConfiguration('gui'),
-                    'controllers_config': LaunchConfiguration('controllers_config'),
+                    'model': 'legobot/legobot_with_controllers.xacro',
+                    'controllers_config': 'legobot_controllers.yaml',
                     'rviz': LaunchConfiguration('rviz'),
-                    'rvizconfig': LaunchConfiguration('rvizconfig'),
-                    'use_mock_hardware': LaunchConfiguration('use_mock_hardware'),
-                }.items()
+                    'rvizconfig': 'legobot.rviz',
+                    # !!!!! IMPORTANT !!!!!!
+                    # If you work on a real robot and don’t have a simulator running, 
+                    # it is often faster to use the mock_components/GenericSystem hardware component 
+                    # instead of writing a custom one. Stop the launch file and start it again 
+                    # with 'use_mock_hardware:=True'
+                    'use_mock_hardware': "false",
+                }.items(),
+            condition=IfCondition(LaunchConfiguration('sim_legobot'))
         ),
-        robot_localization_node
+
+        # Launch real legobot and rviz
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    pkg_project_description,
+                    'launch',
+                    'real_legobot.launch.py'
+                ])
+            ),
+            launch_arguments={
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                    'model': 'legobot/legobot.xacro',
+                    'rviz': LaunchConfiguration('rviz'),
+                    'rvizconfig': 'legobot.rviz',
+                }.items(),
+            condition=UnlessCondition(LaunchConfiguration('sim_legobot'))
+        ),
+
+        # robot_localization_node
 
     ])
