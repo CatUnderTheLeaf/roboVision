@@ -6,9 +6,9 @@
     bridge:
       ros2mqtt:
         ros_topics:
-          - /ping/primitive
-        /ping/primitive:
-          mqtt_topic: pingpong/primitive
+          - /ros_bot_cmd/primitive
+        /ros_bot_cmd/primitive:
+          mqtt_topic: legobot_cmd/primitive
           primitive: true
           ros_type: std_msgs/msg/String
           advanced:
@@ -19,9 +19,9 @@
                 reliability: auto
       mqtt2ros:
         mqtt_topics:
-          - pingpong/primitive
-        pingpong/primitive:
-          ros_topic: /pong/primitive
+          - legobot_odom/primitive
+        legobot_odom/primitive:
+          ros_topic: /odom/primitive
           primitive: true
           ros_type: std_msgs/msg/String
           advanced:

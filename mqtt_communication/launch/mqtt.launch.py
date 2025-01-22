@@ -36,7 +36,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
-import launch_ros.actions
+from launch_ros.actions import Node
 
 
 from launch.actions import IncludeLaunchDescription
@@ -46,8 +46,9 @@ from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 def generate_launch_description():
     config_dir = get_package_share_directory('mqtt_communication')
     config = os.path.join(config_dir, 'config', 'bridge.params.yaml')
+    
     # include xml launch file
-    launch_include = IncludeLaunchDescription(
+    mqtt_client_launch_include = IncludeLaunchDescription(
         XMLLaunchDescriptionSource(
             os.path.join(
                 get_package_share_directory("mqtt_client"),
@@ -59,4 +60,14 @@ def generate_launch_description():
         }.items()
     )
 
-    return LaunchDescription([launch_include])
+    cmd_vel_converter_node = Node(
+       package='mqtt_communication',
+       executable='cmd_vel_converter_node',
+       name='cmd_vel_converter_node',
+       output='screen'       
+    )
+
+    return LaunchDescription([
+        mqtt_client_launch_include,
+        cmd_vel_converter_node
+        ])
