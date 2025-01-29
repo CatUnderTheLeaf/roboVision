@@ -27,6 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
             'cmd_vel_converter_node = mqtt_communication.cmd_vel_to_legobot_cmd:main',
+            'odometry_publisher_node = mqtt_communication.odometry_publisher:main',
         ],
     },
 )

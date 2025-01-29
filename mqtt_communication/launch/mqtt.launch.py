@@ -67,7 +67,15 @@ def generate_launch_description():
        output='screen'       
     )
 
+    odometry_publisher_node = Node(
+       package='mqtt_communication',
+       executable='odometry_publisher_node',
+       name='odometry_publisher_node',
+       output='screen'       
+    )
+
     return LaunchDescription([
         mqtt_client_launch_include,
-        cmd_vel_converter_node
+        cmd_vel_converter_node,
+        odometry_publisher_node
         ])

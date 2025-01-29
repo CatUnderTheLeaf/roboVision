@@ -4,6 +4,7 @@ from geometry_msgs.msg import TwistStamped
 import rclpy.time
 from std_msgs.msg import String
 from rosidl_runtime_py import message_to_yaml
+import time
 
 class CmdVelConverter(Node):
 
@@ -24,7 +25,10 @@ class CmdVelConverter(Node):
     def cmd_vel_callback(self, msg):
 
         new_msg = String()
-        new_msg.data = '\n'.join(['cmd: drive', f'sec: {msg.header.stamp.sec}', f'nanosec: {msg.header.stamp.nanosec}', f'linear: {msg.twist.linear.x}', f'angular: {msg.twist.angular.z}'])
+        # time = self.get_clock().now().to_msg()
+        # !!!!!!!!!!
+        # publish with rate=3 for robot to catch up
+        new_msg.data = '\n'.join(['cmd: drive', f'sec: {time.time()}', f'nanosec: {time.time_ns()}', f'linear: {msg.twist.linear.x}', f'angular: {msg.twist.angular.z}'])
         self.publisher_.publish(new_msg)        
 
 def main(args=None):
