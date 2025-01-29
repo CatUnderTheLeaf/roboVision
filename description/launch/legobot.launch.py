@@ -90,14 +90,13 @@ def generate_launch_description():
         
         control_node,
         robot_state_publisher_node,
-        # robot_controller_spawner,        
-        # RegisterEventHandler(
-        #     event_handler=OnProcessExit(
-        #         target_action=robot_controller_spawner,
-        #         on_exit=[joint_state_broadcaster_spawner],
-        #     )
-        # ),
-        joint_state_broadcaster_spawner,
+        robot_controller_spawner,        
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=robot_controller_spawner,
+                on_exit=[joint_state_broadcaster_spawner],
+            )
+        ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,

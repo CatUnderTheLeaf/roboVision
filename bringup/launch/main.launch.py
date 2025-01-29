@@ -1,9 +1,9 @@
 from launch_ros.substitutions import FindPackageShare
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 
 
@@ -53,6 +53,25 @@ def generate_launch_description():
                 ])
             ])            
         ),
+        # launch legobot with `sim_legobot`=false
+        # to launch the real legobot, not simulated
+        DeclareLaunchArgument(
+            'sim_legobot', default_value='false',
+            description='flag to launch the simulated in RVIZ legobot with ros2_control'),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('bringup'),
+                    'launch',
+                    'legobot.launch.py'
+                ])
+            ]),
+            launch_arguments={
+                'sim_legobot': LaunchConfiguration('sim_legobot'),
+            }.items()
+        ),
+
+
         # IncludeLaunchDescription(
         #     PythonLaunchDescriptionSource([
         #         PathJoinSubstitution([

@@ -33,7 +33,7 @@ def generate_launch_description():
             'rviz', default_value='True',
             description='Flag to open RViz.'),
         DeclareLaunchArgument(
-            'sim_legobot', default_value='false',
+            'sim_legobot', default_value='true',
             description='flag to launch the simulated in RVIZ legobot with ros2_control'),
         
         # Launch simulated with ros2_control legobot and rviz
