@@ -26,9 +26,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'alexa_client = voice_commands.alexa_interface:main',
-            # 'action_server = voice_commands.action_server:main',
-            # 'action_client = voice_commands.action_client:main',
+            # 'alexa_client = voice_commands.alexa_interface:main',
+            'action_server = voice_commands.action_server:main',
+            'action_client = voice_commands.action_client:main',
         ],
     },
 )

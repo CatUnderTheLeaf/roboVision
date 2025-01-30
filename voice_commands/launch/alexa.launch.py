@@ -48,7 +48,7 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
-       alexa_client,
-    #    action_server,
-    #    action_client
+    #    alexa_client,
+       action_server,
+       action_client
     ])
