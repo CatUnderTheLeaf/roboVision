@@ -71,6 +71,8 @@ class EV3botActionServer(Node):
 
         cmd_vel = self.get_twist_msg(goal_handle.request.task)
 
+        # TODO
+        # later make it more sophisticated
         # dummy loop to simulate the robot moving
         start = self.get_clock().now()
         duration = Duration(seconds=10)

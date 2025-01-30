@@ -15,6 +15,12 @@ class EV3botActionClient(Node):
         self.sub = self.create_subscription(String, '/task', self.send_goal, 10)
 
     def send_goal(self, msg):
+        """
+        Send goal to the action server
+
+        :param msg(string): task to be executed
+        """
+
         self.get_logger().info(f'Your have a {msg.data} task from client')
         goal_msg = EV3bot.Goal()
         goal_msg.task =  msg.data
