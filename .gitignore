@@ -1,6 +1,3 @@
-voice_commands/config/alexa-skill-config.yaml
-
-
 # Prerequisites
 *.d
 
@@ -35,3 +32,4 @@ voice_commands/config/alexa-skill-config.yaml
 *.out
 *.app
 
+voice_commands/config/alexa-skill-config.yaml

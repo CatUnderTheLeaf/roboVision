@@ -33,15 +33,15 @@ def generate_launch_description():
     
     return LaunchDescription([
         # launch alexa api and action servers
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource([
-        #         PathJoinSubstitution([
-        #             FindPackageShare('voice_commands'),
-        #             'launch',
-        #             'alexa.launch.py'
-        #         ])
-        #     ])            
-        # ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('voice_commands'),
+                    'launch',
+                    'alexa.launch.py'
+                ])
+            ])            
+        ),
 
         # launch ros2mqtt bridge
         IncludeLaunchDescription(
