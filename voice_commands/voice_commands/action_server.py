@@ -75,11 +75,11 @@ class EV3botActionServer(Node):
         # later make it more sophisticated
         # dummy loop to simulate the robot moving
         start = self.get_clock().now()
-        duration = Duration(seconds=10)
+        duration = Duration(seconds=1)
         while (self.get_clock().now() - start) < duration:
             cmd_vel.header.stamp = self.get_clock().now().to_msg()
             self.publisher_.publish(cmd_vel)
-            self.get_clock().sleep_for(Duration(seconds=0.1))
+            self.get_clock().sleep_for(Duration(seconds=0.4))
 
         # make sure the robot stops after the loop
         cmd_vel = self.get_twist_msg('0')

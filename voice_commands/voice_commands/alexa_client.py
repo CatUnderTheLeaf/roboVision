@@ -95,6 +95,23 @@ def main(args=None):
 
             return handler_input.response_builder.response
 
+    class RotateIntentHandler(AbstractRequestHandler):
+        def can_handle(self, handler_input):
+            # type: (HandlerInput) -> bool
+            return is_intent_name("RotateIntent")(handler_input)
+
+        def handle(self, handler_input):
+            # type: (HandlerInput) -> Response
+            speech_text = "Ok, I'm rotating"
+
+            handler_input.response_builder.speak(speech_text).set_card(
+                SimpleCard("Rotate", speech_text)).set_should_end_session(
+                False)
+
+            send_goal('4')
+
+            return handler_input.response_builder.response
+
     class StopIntentHandler(AbstractRequestHandler):
         def can_handle(self, handler_input):
             # type: (HandlerInput) -> bool
@@ -152,6 +169,7 @@ def main(args=None):
     skill_builder.add_request_handler(DriveIntentHandler())
     skill_builder.add_request_handler(PauseIntentHandler())
     skill_builder.add_request_handler(StopIntentHandler())
+    skill_builder.add_request_handler(RotateIntentHandler())
     skill_builder.add_exception_handler(AllExceptionHandler())
     
     # get the skill id from the config file from the share directory

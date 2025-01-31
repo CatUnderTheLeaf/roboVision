@@ -8,12 +8,8 @@ Panels:
         - /Status1
         - /RobotModel1
         - /TF1/Frames1
-        - /TF1/Frames1/base_link1
-        - /TF1/Frames1/odom1
         - /TF1/Tree1
-        - /TF1/Tree1/odom1
         - /Odometry1
-        - /Odometry1/Status1
         - /Odometry1/Topic1
       Splitter Ratio: 0.5
     Tree Height: 839
@@ -177,7 +173,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /legobot_diff_controller/odom
+        Value: /odom
       Value: true
   Enabled: true
   Global Options:
