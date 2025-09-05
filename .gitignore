@@ -33,3 +33,4 @@
 *.app
 
 voice_commands/config/alexa-skill-config.yaml
+yolo/yolo/image_path_v2/*

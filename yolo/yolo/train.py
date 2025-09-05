@@ -13,8 +13,8 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # for the first usage:
 # model_last_weights = "yolov8s-worldv2.pt"
 # for other usages past here the path to the last training
-model_last_weights = '/home/cat/projects/roboVision/runs/detect/train12/weights/last.pt'
+model_last_weights = '/home/cat/projects/roboVision/runs/detect/train24/weights/best.pt'
 model = YOLOWorld(model_last_weights)
 
 # Train the model on the COCO8 example dataset for 100 epochs
-results = model.train(data="lvis.yaml", epochs=4, imgsz=224, fraction=0.2)
+results = model.train(data="lvis.yaml", epochs=3, imgsz=224, fraction=0.4)

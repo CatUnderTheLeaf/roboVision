@@ -87,14 +87,6 @@ def generate_launch_description():
     #     output='screen',
     # )
 
-    robot_localization_node = Node(
-       package='robot_localization',
-       executable='ekf_node',
-       name='ekf_filter_node',
-       output='screen',
-       parameters=[
-           PathJoinSubstitution([pkg_project_bringup, 'config/ekf.yaml']), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
-    )
 
     return LaunchDescription([
         # TODO
